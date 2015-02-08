@@ -153,9 +153,13 @@ readpass ()
         if [ $PLYMOUTH -eq $TRUE ]; then
             PASS=$(plymouth_readpass "$1")
         elif [ $USPLASH -eq $TRUE ]; then
+		    msg TEXT "WARNING No SSH unlock support available"
             usplash_write "INPUTQUIET $1"
             PASS="$(cat /dev/.initramfs/usplash_outfifo)"
+        elif [ -f /lib/cryptsetup/askpass ]; then
+		    PASS=$(/lib/cryptsetup/askpass "$1")
         else
+		    msg TEXT "WARNING No SSH unlock support available"
             [ $STTY -ne $TRUE ] && msg TEXT "WARNING stty not found, password will be visible"
             echo -n "$1" >&2
             $STTYCMD -echo
