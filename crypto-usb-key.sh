@@ -23,12 +23,12 @@
 # Updated by Renaud Metrich renaud.metrich/at/laposte/net 2011-09-24
 # to support Ubuntu 10.04 and onward.
 # Explanation of the patch:
-# The issue reported later against USB was due to the fact that devices in
-# /sys/block/*/device point to a relative path on Ubuntu instead of full
+# The issue reported later against USB was due to the fact that devices in  
+# /sys/block/*/device point to a relative path on Ubuntu instead of full  
 # path name. The solution was to cd to that directory and issue a pwd.
-# Also, I improved a bit the algorithm to speed up things, typically by
-# first checking whether the device (e.g. sdb) was a USB and removable
-# stuff, instead of doing the same test on every single partition of the
+# Also, I improved a bit the algorithm to speed up things, typically by  
+# first checking whether the device (e.g. sdb) was a USB and removable  
+# stuff, instead of doing the same test on every single partition of the  
 # device (e.g. sdb1, sdb2, ...).
 #
 # 2012-03-29
@@ -113,10 +113,10 @@ msg ()
         echo $2 | while read LINE; do
             if [ $PLYMOUTH -eq $TRUE ]; then
                 # use plymouth
-                plymouth message --text="$LINE"
+                plymouth message --text="$LINE"      
             elif [ $USPLASH -eq $TRUE ]; then
                 # use usplash
-                /sbin/usplash_write "$1 $LINE"
+                /sbin/usplash_write "$1 $LINE"      
             else
                 # use stderr for all messages
                 echo $3 "$2" >&2
@@ -132,13 +132,26 @@ dbg ()
     fi
 }
 
+plymouth_readpass ()
+{
+    PIPE=/lib/cryptsetup/passfifo
+    mkfifo $PIPE
+    plymouth ask-for-password --prompt "$1"  >$PIPE &
+    PLPID=$!
+    read PASS <$PIPE
+    kill $PLPID >/dev/null
+    rm -f $PIPE
+    echo "$PASS"
+}
+
+
 # read password from console or with usplash
 # usage: readpass "prompt"
 readpass ()
 {
     if [ $# -gt 0 ]; then
         if [ $PLYMOUTH -eq $TRUE ]; then
-            PASS="$(plymouth ask-for-password --prompt "$1")"
+            PASS=$(plymouth_readpass "$1")
         elif [ $USPLASH -eq $TRUE ]; then
             usplash_write "INPUTQUIET $1"
             PASS="$(cat /dev/.initramfs/usplash_outfifo)"
@@ -164,7 +177,7 @@ MD=/tmp-usb-mount
 
 # if we were passed a different than default key to use on the command
 # line, then use it
-[ -n "$1" -a "$1" != "none" ] && KEYFILE=$1 # should use $CRYPTTAB_KEY instead?
+[ -n "$1" -a "$1" != "none" ] && KEYFILE=$1 # should use $CRYPTTAB_KEY instead? 
 
 # If the file already exists use it.
 # This is useful where an encrypted volume contains keyfile(s) for later
@@ -183,7 +196,7 @@ else
         dbg TEXT "Loading driver 'usb_storage'"
         modprobe usb_storage >/dev/null 2>&1
     fi
-
+    
     # Is the MMC (SDcard) driver loaded?
     cat /proc/modules | busybox grep mmc >/dev/null 2>&1
     MMCLOAD=0$?
@@ -295,7 +308,7 @@ else
         elif [ $SECONDS_SLEPT -ne $MAX_SECONDS ]; then
            dbg TEXT "USB/MMC Device not found yet, sleeping for 1s and trying again"
            sleep 1
-        else
+        else           
            dbg TEXT "USB/MMC Device not found, giving up after ${MAX_SECONDS}s... (increase MAX_SECONDS?)"
         fi
     done
