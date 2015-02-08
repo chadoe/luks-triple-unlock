@@ -56,7 +56,7 @@ FALSE=1
 DEBUG=$TRUE
 
 # default path to key-file on the USB/MMC disk
-KEYFILE=".keyfile"
+KEYFILE="$CRYPTTAB_KEY"
 
 # maximum time to sleep waiting for devices to become ready before
 # asking for passphrase
@@ -139,7 +139,7 @@ plymouth_readpass ()
     plymouth ask-for-password --prompt "$1"  >$PIPE &
     PLPID=$!
     read PASS <$PIPE
-    kill $PLPID >/dev/null
+    kill $PLPID >/dev/null 2>&1
     rm -f $PIPE
     echo "$PASS"
 }
@@ -153,13 +153,13 @@ readpass ()
         if [ $PLYMOUTH -eq $TRUE ]; then
             PASS=$(plymouth_readpass "$1")
         elif [ $USPLASH -eq $TRUE ]; then
-		    msg TEXT "WARNING No SSH unlock support available"
+            msg TEXT "WARNING No SSH unlock support available"
             usplash_write "INPUTQUIET $1"
             PASS="$(cat /dev/.initramfs/usplash_outfifo)"
         elif [ -f /lib/cryptsetup/askpass ]; then
-		    PASS=$(/lib/cryptsetup/askpass "$1")
+            PASS=$(/lib/cryptsetup/askpass "$1")
         else
-		    msg TEXT "WARNING No SSH unlock support available"
+            msg TEXT "WARNING No SSH unlock support available"
             [ $STTY -ne $TRUE ] && msg TEXT "WARNING stty not found, password will be visible"
             echo -n "$1" >&2
             $STTYCMD -echo
@@ -178,10 +178,6 @@ OPENED=$FALSE
 
 # temporary mount path for USB/MMC key
 MD=/tmp-usb-mount
-
-# if we were passed a different than default key to use on the command
-# line, then use it
-[ -n "$1" -a "$1" != "none" ] && KEYFILE=$1 # should use $CRYPTTAB_KEY instead? 
 
 # If the file already exists use it.
 # This is useful where an encrypted volume contains keyfile(s) for later
@@ -322,7 +318,7 @@ fi
 [ $USPLASH -eq $TRUE ] && msg STATUS "                               " && msg CLEAR ""
 
 if [ $OPENED -ne $TRUE ]; then
-    dbg TEXT "Failed to find suitable USB/MMC key-file ..."
+    dbg TEXT "Failed to find USB/MMC key-file \"$KEYFILE\"..."
     readpass "$(printf "Unlocking the disk $CRYPTTAB_SOURCE ($CRYPTTAB_NAME)\nEnter passphrase: ")"
 else
     dbg TEXT "Success loading key-file from $SFS ($LABEL)"
