@@ -134,7 +134,8 @@ dbg ()
 
 plymouth_readpass ()
 {
-    PIPE=/lib/cryptsetup/passfifo
+    local PASS PLPID
+    local PIPE=/lib/cryptsetup/passfifo
     mkfifo -m 0600 $PIPE
     plymouth ask-for-password --prompt "$1"  >$PIPE &
     PLPID=$!
