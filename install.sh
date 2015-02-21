@@ -30,8 +30,14 @@ fi
 
 
 #Add key to the cryptvolume
+echo "Checking keyfile..."
 cryptUUID=$(blkid -t TYPE=crypto_LUKS -o value -s UUID)
-cryptsetup luksAddKey UUID=$cryptUUID "$KEYFILEPATH"
+if cryptsetup luksDump UUID=$cryptUUID --dump-master-key --batch-mode --key-file "$KEYFILEPATH" > /dev/null ; then
+    echo "Keyfile \"$KEYFILE\" already added to luks."
+else
+    echo "Adding keyfile \"$KEYFILE\" to luks."
+    cryptsetup luksAddKey UUID=$cryptUUID "$KEYFILEPATH"
+fi
 
 #Add modules needed for usb reading
 grep -q '^vfat$' /etc/initramfs-tools/modules || echo 'vfat' >> /etc/initramfs-tools/modules
