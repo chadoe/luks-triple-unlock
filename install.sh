@@ -11,7 +11,6 @@
 set -e
 
 KEYFILEPATH="$1"
-KEYFILE=$(basename $KEYFILEPATH)
 if [ -z "$KEYFILEPATH" ]; then
     KEYFILEPATH=".keyfile"
     KEYFILE="$KEYFILEPATH"
@@ -21,6 +20,8 @@ if [ -z "$KEYFILEPATH" ]; then
 elif [ ! -f "$KEYFILEPATH" ]; then
     echo "Keyfile \"$KEYFILEPATH\" not found, exiting."
     exit 1;
+else
+    KEYFILE=$(basename $KEYFILEPATH)
 fi
 
 
