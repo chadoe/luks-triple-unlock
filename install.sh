@@ -30,8 +30,22 @@ fi
 
 
 #Add key to the cryptvolume
+echo "Getting first cryptodisk in /etc/crypttab"
+lowestlinenr=9999
+for diskid in $(blkid -t TYPE=crypto_LUKS -o value -s UUID); do
+    linenr=$(awk 'match($0,v){print NR; exit}' v=$diskid /etc/crypttab)
+    echo "Found $diskid on line $linenr"
+    if [ $linenr -lt $lowestlinenr ]; then
+        cryptUUID=$diskid
+        lowestlinenr=$linenr
+    fi
+done
+if [ -z "$cryptUUID" ]; then
+    echo "Unable to find a cryptodisk to use, exiting."
+    exit 1
+fi
+echo "Using cryptodisk $cryptUUID"
 echo "Checking keyfile..."
-cryptUUID=$(blkid -t TYPE=crypto_LUKS -o value -s UUID)
 if cryptsetup luksDump UUID=$cryptUUID --dump-master-key --batch-mode --key-file "$KEYFILEPATH" > /dev/null ; then
     echo "Keyfile \"$KEYFILE\" already added to luks."
 else
