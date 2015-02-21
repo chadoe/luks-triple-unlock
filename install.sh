@@ -30,12 +30,20 @@ cryptUUID=$(blkid -t TYPE=crypto_LUKS -o value -s UUID)
 cryptsetup luksAddKey UUID=$cryptUUID "$KEYFILEPATH"
 
 #Add modules needed for usb reading
-echo -e "vfat\nfat\nnls_cp437\nnls_iso8859_1\nnls_utf8\nnls_base" | sudo tee -a /etc/initramfs-tools/modules
+grep -q '^vfat$' /etc/initramfs-tools/modules || echo 'vfat' >> /etc/initramfs-tools/modules
+grep -q '^fat$' /etc/initramfs-tools/modules || echo 'fat' >> /etc/initramfs-tools/modules
+grep -q '^nls_cp437$' /etc/initramfs-tools/modules || echo 'nls_cp437' >> /etc/initramfs-tools/modules
+grep -q '^nls_iso8859_1$' /etc/initramfs-tools/modules || echo 'nls_iso8859_1' >> /etc/initramfs-tools/modules
+grep -q '^nls_utf8$' /etc/initramfs-tools/modules || echo 'nls_utf8' >> /etc/initramfs-tools/modules
+grep -q '^nls_base$' /etc/initramfs-tools/modules || echo 'nls_base' >> /etc/initramfs-tools/modules
 
 #Setup cryptkey
 cp crypto-usb-key.sh /usr/local/sbin/
 chmod a+x /usr/local/sbin/crypto-usb-key.sh
-sed -i "/$cryptUUID/ s/none/$KEYFILE/g" /etc/crypttab
+sed -i "/$cryptUUID/ s/$cryptUUID[ \t]*[^ \t]*/$cryptUUID $KEYFILE/g" /etc/crypttab
+#remove any previous keyscript
+sed -i "/$cryptUUID/ s/,keyscript=[^, \t]*//" /etc/crypttab
+#add our keyscript
 sed -i "/$cryptUUID/ s/\$/,keyscript=\/usr\/local\/sbin\/crypto-usb-key.sh/" /etc/crypttab
 
 #Dropbear ssh unlock
@@ -46,7 +54,8 @@ ifaces=$(ip addr|egrep "^[0-9]*: "|egrep -v "^[0-9]*: lo:"|awk '{print $2}'|sed 
 for iface in $ifaces; do
     if [ -f /sys/class/net/$iface/device/uevent ]; then
         echo "Found interface $iface"
-        echo "$(grep DRIVER /sys/class/net/$iface/device/uevent |awk -F'=' '{print $2}')" | sudo tee -a /etc/initramfs-tools/modules
+		ifacemod="$(grep DRIVER /sys/class/net/$iface/device/uevent |awk -F'=' '{print $2}')"
+		grep -q "^$ifacemod$" /etc/initramfs-tools/modules || echo "$ifacemod" >> /etc/initramfs-tools/modules
     fi
 done
 
