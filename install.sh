@@ -14,9 +14,13 @@ KEYFILEPATH="$1"
 if [ -z "$KEYFILEPATH" ]; then
     KEYFILEPATH=".keyfile"
     KEYFILE="$KEYFILEPATH"
-    echo "Generating key \"$KEYFILE\", this should go on your USB stick."
-    apt-get install -y sharutils
-    head -c 2880 /dev/urandom | uuencode -m - | head -n 65 | tail -n 64 > "$KEYFILE"
+	if [ ! -f "$KEYFILEPATH" ]; then
+        echo "Generating key \"$KEYFILE\", this should go on your USB stick."
+        apt-get install -y sharutils
+        head -c 2880 /dev/urandom | uuencode -m - | head -n 65 | tail -n 64 > "$KEYFILE"
+    else
+        echo "Using existing key \"$KEYFILE\", this should go on your USB stick."
+	fi
 elif [ ! -f "$KEYFILEPATH" ]; then
     echo "Keyfile \"$KEYFILEPATH\" not found, exiting."
     exit 1;
