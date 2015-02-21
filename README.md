@@ -21,5 +21,15 @@ Ways to unlock your machine:
 - with an USB flash drive. Copy .keyfile (or the file you provided on the commandline to ./install.sh) to a fat32 partition on an USB flash drive. Stick it in the machine and boot, it should boot straight through.
 
 Optional:
-- edit /etc/initramfs-tools/initramfs.conf, add `PKGOPTION_dropbear_OPTION="-s -p 22"`, -s to disallow password logins, -p to change port.
+- edit /etc/initramfs-tools/initramfs.conf, edit `PKGOPTION_dropbear_OPTION="-s -p 22"`, -s disallows password logins, -p set the ssh port.
+- the ip-address wil be set by dhcp, if you don't have your router configured to hand out semi-fixed ip's by mac or you have multiple network interfaces or just want to set a fixed ip you should probably edit /etc/initramfs-tools/initramfs.conf and change the IP value:
+```DROPBEAR=y
+  # See http://www.kernel.org/doc/Documentation/filesystems/nfs/nfsroot.txt.
+  #IP=<client-ip>:<server-ip>:<gw-ip>:<netmask>:<hostname>:<device>:<autoconf>
+  #IP=10.10.1.199::10.10.1.1:255.255.255.0::eth0:off
+  #IP=192.168.1.99::192.168.1.1:255.255.255.0::wlan0:off
+  #IP=192.168.1.99::192.168.1.1:255.255.255.0::wlan0:dhcp
+  #IP=:::::wlan0:dhcp
+  #IP=dhcp
+```
 - `sudo update-initramfs -u -k $(uname -r)` to apply the changes.
