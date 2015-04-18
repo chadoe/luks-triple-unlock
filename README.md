@@ -12,13 +12,13 @@ Usage:
 - `sudo apt-get install -y git-core`
 - `git clone --depth 1 https://github.com/chadoe/luks-triple-unlock.git && cd luks-triple-unlock`
 - `chmod +x *.sh`
-- `sudo ./install.sh [keyfile]`, it will ask you for the passphrase for the luks drive, keyfile is a path to a file you want to use as a key for the luks volume, this file will be read from an USB flash drive fat32 partition on boot. If no keyfile provided on the commandline a file `.keyfile` will be generated in the current directory. 
+- `sudo ./install.sh [keyfile]`, it will ask you for the passphrase for the luks drive, keyfile is a path to a file you want to use as a key for the luks volume, this file will be read from an USB flash drive ext(2/3/4)/fat32/ntfs partition on boot. If no keyfile provided on the commandline a file `.keyfile` will be generated in the current directory. 
 - `sudo reboot`
 
 Ways to unlock your machine:
 - from the console
 - from SSH. Copy /etc/initramfs-tools/root/.ssh/id_rsa, this is the private key you need to log into dropbear (no password, root@machinename). When you connect it will ask you for the passphrase to unlock the machine.
-- with an USB flash drive. Copy .keyfile (or the file you provided on the commandline to ./install.sh) to a fat32 partition on an USB flash drive. Stick it in the machine and boot, it should boot straight through.
+- with an USB flash drive. Copy .keyfile (or the file you provided on the commandline to ./install.sh) to any ext(2/3/4)/fat32/ntfs partition on an USB flash drive. Stick it in the machine and boot, it should boot straight through.
 
 Optional:
 - edit /etc/initramfs-tools/initramfs.conf, edit `PKGOPTION_dropbear_OPTION="-s -p 22"`, -s disallows password logins, -p set the ssh port.
