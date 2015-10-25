@@ -11,7 +11,6 @@ Usage:
 - Install Ubuntu server or Debian with full disk encrypted LVM
 - `sudo apt-get install -y git-core`
 - `git clone --depth 1 https://github.com/chadoe/luks-triple-unlock.git && cd luks-triple-unlock`
-- `chmod +x *.sh`
 - `sudo ./install.sh [keyfile]`, it will ask you for the passphrase for the luks drive, keyfile is a path to a file you want to use as a key for the luks volume, this file will be read from an USB flash drive ext(2/3/4)/fat32/ntfs partition on boot. If no keyfile provided on the commandline a file `.keyfile` will be generated in the current directory. 
 - `sudo reboot`
 
