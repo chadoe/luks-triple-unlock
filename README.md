@@ -4,8 +4,8 @@ Set of shell scripts to allow unlocking of full disk encrypted Ubuntu and Debian
 Use at your own risk, I'm not responsable for any damage this script might do to your system, make backups, make sure you have a safe boot option, test it in a VM first... etc. etc.
 
 Tested on:
-- Ubuntu server 14.10 (no desktop)
-- Debian 7.8 (no desktop)
+- Ubuntu server 14.10-15.10 (no desktop)
+- Debian 7.8-8.2 (no desktop)
 
 Usage:
 - Install Ubuntu server or Debian with full disk encrypted LVM
@@ -21,8 +21,8 @@ Ways to unlock your machine:
 - with an USB flash drive. Copy .keyfile (or the file you provided on the commandline to ./install.sh) to any ext(2/3/4)/fat32/ntfs partition on an USB flash drive. Stick it in the machine and boot, it should boot straight through.
 
 Optional:
-- edit /etc/initramfs-tools/initramfs.conf, edit `PKGOPTION_dropbear_OPTION="-s -p 22"`, -s disallows password logins, -p set the ssh port.
-- the ip-address wil be set by dhcp, if you don't have your router configured to hand out semi-fixed ip's by mac or you have multiple network interfaces or just want to set a fixed ip you should probably edit /etc/initramfs-tools/initramfs.conf and change the IP value:
+- edit /etc/initramfs-tools/conf.d/dropbear, edit `PKGOPTION_dropbear_OPTION="-s -p 22"`, -s disallows password logins, -p set the ssh port.
+- the ip-address wil be set by dhcp, if you don't have your router configured to hand out semi-fixed ip's by mac or you have multiple network interfaces or just want to set a fixed ip you should probably edit /etc/initramfs-tools/conf.d/dropbear and change the IP value:
 ```DROPBEAR=y
   # See http://www.kernel.org/doc/Documentation/filesystems/nfs/nfsroot.txt.
   #IP=<client-ip>:<server-ip>:<gw-ip>:<netmask>:<hostname>:<device>:<autoconf>

@@ -84,11 +84,20 @@ for iface in $ifaces; do
 done
 
 #explicitely enable dropbear (=default behavior), won't touch existing setting if any
-grep -q '^DROPBEAR=' /etc/initramfs-tools/initramfs.conf || echo 'DROPBEAR=y' >> /etc/initramfs-tools/initramfs.conf
+(grep -qs '^DROPBEAR=' /etc/initramfs-tools/conf.d/dropbear || \
+ grep '^DROPBEAR=' /etc/initramfs-tools/initramfs.conf || \
+ echo 'DROPBEAR=y' \
+) >> /etc/initramfs-tools/conf.d/dropbear
 #explicitely set ip to dhcp (=default behavior), won't touch existing setting if any
-grep -q '^IP=' /etc/initramfs-tools/initramfs.conf || echo 'IP=dhcp' >> /etc/initramfs-tools/initramfs.conf
+(grep -qs '^IP=' /etc/initramfs-tools/conf.d/dropbear || \
+ grep '^IP=' /etc/initramfs-tools/initramfs.conf || \
+ echo 'IP=dhcp' \
+) >> /etc/initramfs-tools/conf.d/dropbear
 #disallow password logins (=non-default behavior), set port to 22 (=default behavior), won't touch existing setting if any
-grep -q '^PKGOPTION_dropbear_OPTION=' /etc/initramfs-tools/initramfs.conf || echo 'PKGOPTION_dropbear_OPTION="-s -p 22"' >> /etc/initramfs-tools/initramfs.conf
+(grep -qs '^PKGOPTION_dropbear_OPTION=' /etc/initramfs-tools/conf.d/dropbear || \
+ grep '^PKGOPTION_dropbear_OPTION=' /etc/initramfs-tools/initramfs.conf || \
+ echo 'PKGOPTION_dropbear_OPTION="-s -p 22"' \
+) >> /etc/initramfs-tools/conf.d/dropbear
 
 
 #Private key of root needed to login to dropbear
