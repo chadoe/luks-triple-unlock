@@ -94,9 +94,9 @@ done
  echo 'IP=dhcp' \
 ) >> /etc/initramfs-tools/conf.d/dropbear
 #disallow password logins (=non-default behavior), set port to 22 (=default behavior), won't touch existing setting if any
-(grep -qs '^PKGOPTION_dropbear_OPTION=' /etc/initramfs-tools/conf.d/dropbear || \
- grep '^PKGOPTION_dropbear_OPTION=' /etc/initramfs-tools/initramfs.conf || \
- echo 'PKGOPTION_dropbear_OPTION="-s -p 22"' \
+(grep -qs 'PKGOPTION_dropbear_OPTION=' /etc/initramfs-tools/conf.d/dropbear || \
+ grep 'PKGOPTION_dropbear_OPTION=' /etc/initramfs-tools/initramfs.conf || \
+ echo 'export PKGOPTION_dropbear_OPTION="-s -p 22"' \
 ) >> /etc/initramfs-tools/conf.d/dropbear
 
 
