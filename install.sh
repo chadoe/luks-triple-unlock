@@ -237,7 +237,8 @@ esac
  
 if [ "\${DROPBEAR}" != "n" ] && [ -r "/etc/crypttab" ] ; then
     #run unlock on ssh login
-    echo unlock>\${DESTDIR}/root/.profile
+	mkdir -p "\${DESTDIR}/root"
+    echo unlock>"\${DESTDIR}/root/.profile"
 	#write the unlock script
     cat > "\${DESTDIR}/bin/unlock" << EOF
 #!/bin/sh

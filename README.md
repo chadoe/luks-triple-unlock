@@ -4,8 +4,8 @@ Set of shell scripts to allow unlocking of full disk encrypted Ubuntu and Debian
 Use at your own risk, I'm not responsable for any damage this script might do to your system, make backups, make sure you have a safe boot option, test it in a VM first... etc. etc.
 
 Tested on:
-- Ubuntu server 14.10-15.10 (no desktop)
-- Debian 7.8-8.2 (no desktop)
+- Ubuntu server 14.10-16.04 (no desktop)
+- Debian 7.8-8.3 (no desktop)
 
 Usage:
 - Install Ubuntu server or Debian with full disk encrypted LVM
