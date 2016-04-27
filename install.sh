@@ -99,14 +99,13 @@ done
  echo 'export PKGOPTION_dropbear_OPTION="-s -p 22"' \
 ) >> /etc/initramfs-tools/conf.d/dropbear
 
-
 #Private key of root needed to login to dropbear
-echo "************************************************************************"
-echo "Copy /etc/initramfs-tools/root/.ssh/id_rsa to your local machine. "
-echo "This is the private key you need to log into dropbear (no password, root@machinename). "
-echo "Or add you own public key to /etc/initramfs-tools/root/.ssh/authorized_keys "
-echo "and rerun update-initramfs -u -k \`uname -r\` "
-echo "************************************************************************"
+#Generate a key if none exists for convenience as this was done in older versions as well
+if [ ! -f /etc/initramfs-tools/root/.ssh/id_rsa ]; then
+    mkdir -p /etc/initramfs-tools/root/.ssh
+    ssh-keygen -t rsa -N '' -f /etc/initramfs-tools/root/.ssh/id_rsa
+    cat /etc/initramfs-tools/root/.ssh/id_rsa.pub >> /etc/initramfs-tools/root/.ssh/authorized_keys
+fi
 
 #Write initramfs scripts
 #
@@ -284,5 +283,10 @@ update-initramfs -u -k $(uname -r)
 
 echo "************************************************************************"
 echo "DONE!"
+echo 
+echo "Copy /etc/initramfs-tools/root/.ssh/id_rsa to your local machine."
+echo "This is the private key you need to log into dropbear (no password, root@machinename)."
+echo "A better option is to add your own public key to /etc/initramfs-tools/root/.ssh/authorized_keys and rerun update-initramfs -u -k \`uname -r\`"
+echo 
 echo "Make sure you have a safe boot option before rebooting."
 echo "************************************************************************"
